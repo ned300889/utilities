@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Nathan Simpson
+  description: Install utilities
+  license: GPL-2.0-or-later
+  min_ansible_version: 2.9
+  role_name: utilities
+  namespace: ned300889
+
+  platforms:
+    - name: Fedora
+      versions:
+        - 34
+
+  galaxy_tags: [utilities]
+
+
+
