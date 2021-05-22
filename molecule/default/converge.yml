@@ -7,7 +7,7 @@
         name: nsimpson
         shell: /bin/bash
         state: present
-      changed_when: false
+
     - name: Install findutils
       ansible.builtin.dnf:
         name: findutils
