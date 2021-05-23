@@ -30,6 +30,7 @@
      - python3-pip
      - codium
      - terminator
+     - buildah
     state: present
 
 - name: Set up ansible
