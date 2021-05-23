@@ -9,8 +9,43 @@
     - fzf
     - bat
     - fontawesome-fonts
-    - git
+    - python3-pip
     state: present
+
+- name: Set up ansible
+  pip:
+    name:
+      - molecule-podman
+      - ansible-lint
+      - molecule
+
+- name: Import key for VScodium
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+
+- name: Add repo for VScodium
+  yum_repository:
+    name: gitlab.com_paulcarroty_vscodium_repo
+    baseurl: https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/
+    gpgkey: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+    enabled: true
+    description: "VScodium"
+    
+- name: Download pycharm-ce
+  get_url:
+    url: https://download.jetbrains.com/python/pycharm-community-2021.1.1.tar.gz
+    dest: /tmp
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install pycharm
+  unarchive:
+    src: /tmp/pycharm-community-2021.1.1.tar.gz
+    dest: /opt/
+    creates: /opt/pycharm-community-2021.1.1/
+    copy: false
 
 - name: clone oh-my-zsh for users
   tags:
