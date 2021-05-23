@@ -1,25 +1,4 @@
 ---
-- name: Install basic packages
-  ansible.builtin.dnf:
-    name:
-      - htop
-      - iotop
-      - byobu
-      - zsh
-      - fzf
-      - bat
-      - git
-      - fontawesome-fonts
-      - python3-pip
-    state: present
-
-- name: Set up ansible
-  pip:
-    name:
-      - molecule-podman
-      - ansible-lint
-      - molecule
-
 - name: Import key for VScodium
   ansible.builtin.rpm_key:
     state: present
@@ -32,6 +11,29 @@
     gpgkey: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
     enabled: true
     description: "VScodium"
+
+- name: Install basic packages
+  ansible.builtin.dnf:
+    name:
+     - htop
+     - iotop
+     - byobu
+     - zsh
+     - fzf
+     - bat
+     - git
+     - fontawesome-fonts
+     - python3-pip
+     - codium
+     - terminator
+    state: present
+
+- name: Set up ansible
+  pip:
+    name:
+      - molecule-podman
+      - ansible-lint
+      - molecule
 
 - name: Download pycharm-ce
   get_url:
