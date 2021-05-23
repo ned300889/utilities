@@ -12,6 +12,10 @@
     enabled: true
     description: "VScodium"
 
+- name: Upgrade repos
+  dnf:
+    name: "*"
+    state: latest
 - name: Install basic packages
   ansible.builtin.dnf:
     name:
