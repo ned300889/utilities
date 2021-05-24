@@ -1,0 +1,48 @@
+---
+- name: Import key for VScodium
+  apt_key:
+    url: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+    state: present
+
+- name: Add repo for VScodium
+  ansible.builtin.apt_repository:
+    repo: deb https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/debs/ vscodium main
+    state: present
+    update_cache: yes
+
+- name: Add docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker repo
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    state: present
+    update_cache: yes
+
+- name: Upgrade apt
+  apt:
+    name: "*"
+    state: latest
+
+- name: Install basic packages
+  apt:
+    name:
+     - htop
+     - iotop
+     - byobu
+     - zsh
+     - fzf
+     - bat
+     - git
+     - fonts-font-awesome
+     - python3-pip
+     - codium
+     - terminator
+     - docker-ce
+     - docker-ce-cli
+     - containerd.io
+     - apt-transport-https
+     - ca-certificates
+    state: present

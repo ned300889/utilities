@@ -3,8 +3,13 @@ on: push
 jobs:
   molecule:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        scenario: [fedora, ubuntu]
     steps:
       - uses: actions/checkout@v2
         with:
           path: "${{ github.repository }}"
       - uses: gofrolist/molecule-action@v2
+        with:
+          molecule_args: --scenario-name ${{ matrix.scenario }}
