@@ -1,3 +1,98 @@
 ---
 - name: Include OS-specific tasks
   include_tasks: "{{ ansible_os_family }}-utilities-install.yml"
+
+- name: Set up ansible
+  pip:
+    name:
+      - molecule-podman
+      - ansible-lint
+      - molecule
+
+- name: Download pycharm-ce
+  get_url:
+    url: https://download.jetbrains.com/python/pycharm-community-2021.1.1.tar.gz
+    dest: /tmp
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install pycharm
+  unarchive:
+    src: /tmp/pycharm-community-2021.1.1.tar.gz
+    dest: /opt/
+    creates: /opt/pycharm-community-2021.1.1/
+    copy: false
+
+- name: clone oh-my-zsh for users
+  tags:
+    # Suppress warning: [ANSIBLE0006] git used in place of git module
+    # Git module doesn't allow us to set `core.autocrlf=input`.
+    - skip_ansible_lint
+  become: yes
+  become_user: "{{ user.username }}"
+  command: "git clone -c core.autocrlf=input --depth=1 https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh"
+  args:
+    chdir: "~{{ user.username }}"
+    creates: "~{{ user.username }}/.oh-my-zsh"
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: set permissions of oh-my-zsh for users
+  become: yes
+  file:
+    path: "~{{ user.username }}/.oh-my-zsh"
+    mode: "go-w"
+    recurse: yes
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: set default shell for users
+  become: yes
+  user:
+    name: "{{ user.username }}"
+    shell: /bin/zsh
+    state: present
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+  changed_when: false
+
+- name: write .zshrc for users
+  become: yes
+  become_user: "{{ user.username }}"
+  template:
+    src: zshrc.j2
+    dest: "~{{ user.username }}/.zshrc"
+    backup: yes
+    mode: "u=rw,go=r"
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: Create diff-so-fancy directory
+  become: true
+  ansible.builtin.file:
+    path: /src/diff-so-fancy
+    owner: "{{ user.username }}"
+    group: "{{ user.username }}"
+    state: directory
+    mode: "0755"
+  with_items: "{{ users }}"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+- name: Install diff-so-fancy
+  ansible.builtin.git:
+    repo: "https://github.com/so-fancy/diff-so-fancy.git"
+    dest: /src/diff-so-fancy

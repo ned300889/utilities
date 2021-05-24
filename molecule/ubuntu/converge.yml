@@ -1,0 +1,23 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: Create users
+      ansible.builtin.user:
+        name: nsimpson
+        shell: /bin/bash
+        state: present
+      changed_when: false
+    - name: Install findutils
+      apt:
+        name: findutils
+        state: present
+    - name: Install gnupg
+      apt:
+        name: gnupg
+        state: present
+        update_cache: true
+  tasks:
+    - name: "Include utilities"
+      include_role:
+        name: "utilities"
