@@ -13,7 +13,7 @@
         name: findutils
         state: present
     - name: Install gnupg
-      apt: 
+      apt:
         name: gnupg
         state: present
         update_cache: true
