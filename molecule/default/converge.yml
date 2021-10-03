@@ -4,7 +4,7 @@
   pre_tasks:
     - name: Create users
       ansible.builtin.user:
-        name: nsimpson
+        name: nathans
         shell: /bin/bash
         state: present
       changed_when: false

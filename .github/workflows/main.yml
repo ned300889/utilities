@@ -1,15 +1,29 @@
-on: push
+name: Molecule
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   molecule:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        scenario: [fedora, ubuntu]
+        scenario:
+          - fedora34
+          - ubuntu2004
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           path: "${{ github.repository }}"
-      - uses: gofrolist/molecule-action@v2
+      - name: Molecule
+        uses: gofrolist/molecule-action@v2
         with:
-          molecule_args: --scenario-name ${{ matrix.scenario }}
+          molecule_command: test
+        env:
+          MOLECULE_DISTRO: ${{ matrix.scenario }}

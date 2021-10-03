@@ -5,10 +5,16 @@ driver:
   name: docker 
 platforms:
   - name: instance
-    image: fedora:34
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-fedora34}-ansible:latest
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    no_log: false
 provisioner:
   name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
 verifier:
   name: ansible
-lint: |
-  ansible-lint

@@ -28,7 +28,7 @@ Role Variables
     # User configuration
     # Important: oh-my-zsh is installed per user so you need to specify the users to install it for.
     users:
-      - username: nsimpson
+      - username: nathans
         oh_my_zsh:
           theme: robbyrussell
           plugins:

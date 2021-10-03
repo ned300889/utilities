@@ -1,0 +1,53 @@
+---
+- name: clone oh-my-zsh for users
+  become: yes
+  become_user: "{{ user.username }}"
+  ansible.builtin.git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "/home/{{ user.username }}/.zsh"
+    version: master
+    depth: 1
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: set permissions of oh-my-zsh for users
+  become: yes
+  file:
+    path: "~{{ user.username }}/.oh-my-zsh"
+    mode: "go-w"
+    recurse: yes
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: set default shell for users
+  become: yes
+  user:
+    name: "{{ user.username }}"
+    shell: /bin/zsh
+    state: present
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+  changed_when: false
+
+- name: write .zshrc for users
+  become: yes
+  become_user: "{{ user.username }}"
+  template:
+    src: zshrc.j2
+    dest: "~{{ user.username }}/.zshrc"
+    backup: yes
+    mode: "u=rw,go=r"
+  with_items: "{{ users }}"
+  when: "((user.oh_my_zsh | default({})).install | default(oh_my_zsh_install)) | bool"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
