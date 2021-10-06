@@ -45,4 +45,3 @@
     repo: "https://github.com/so-fancy/diff-so-fancy.git"
     dest: /src/diff-so-fancy
     version: master
-    single_branch: True

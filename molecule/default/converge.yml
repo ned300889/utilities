@@ -12,6 +12,13 @@
       ansible.builtin.dnf:
         name: findutils
         state: present
+      when: ansible_distribution == 'RedHat'
+    - name: Install gpgagent
+      ansible.builtin.apt:
+        name: gpg-agent
+        state: present
+        update_cache: true
+      when: ansible_os_family == 'Debian'
   tasks:
     - name: "Include utilities"
       include_role:

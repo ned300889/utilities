@@ -1,16 +1,13 @@
 ---
-- name: Import key for VScodium
+- name: Add vscode key
   ansible.builtin.rpm_key:
     state: present
-    key: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
+    key: https://packages.microsoft.com/keys/microsoft.asc
 
-- name: Add repo for VScodium
-  yum_repository:
-    name: gitlab.com_paulcarroty_vscodium_repo
-    baseurl: https://paulcarroty.gitlab.io/vscodium-deb-rpm-repo/rpms/
-    gpgkey: https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/-/raw/master/pub.gpg
-    enabled: true
-    description: "VScodium"
+- name: Copy yum repo
+  copy:
+    src: vs-code.repo
+    dest: /etc/yum.repos.d/vs-code.repo
 
 - name: Upgrade repos
   dnf:
@@ -29,9 +26,9 @@
      - git
      - fontawesome-fonts
      - python3-pip
-     - codium
      - terminator
      - buildah
+     - code
     state: present
 
 

@@ -27,7 +27,6 @@
      - git
      - fonts-font-awesome
      - python3-pip
-     - codium
      - terminator
      - docker-ce
      - docker-ce-cli
